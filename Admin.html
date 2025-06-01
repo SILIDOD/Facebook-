@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Admin Dashboard</title>
+                <link rel="stylesheet" href="style.css">
+                </head>
+                <body>
+                    <div class="admin-container">
+                            <header class="admin-header">
+                                        <h1>Admin Dashboard</h1>
+                                                    <button id="logoutBtn">Logout</button>
+                                                            </header>
+                                                                    <div class="admin-content">
+                                                                                <h2>User Login Activity</h2>
+                                                                                            <div class="search-container">
+                                                                                                            <input type="text" id="searchInput" placeholder="Search users...">
+                                                                                                                            <button id="searchBtn">Search</button>
+                                                                                                                                        </div>
+                                                                                                                                                    <table id="userTable">
+                                                                                                                                                                    <thead>
+                                                                                                                                                                                        <tr>
+                                                                                                                                                                                                                <th>ID</th>
+                                                                                                                                                                                                                                        <th>Email/Phone</th>
+                                                                                                                                                                                                                                                                <th>Login Time</th>
+                                                                                                                                                                                                                                                                                        <th>IP Address</th>
+                                                                                                                                                                                                                                                                                                                <th>Status</th>
+                                                                                                                                                                                                                                                                                                                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                    </thead>
+                                                                                                                                                                                                                                                                                                                                                                    <tbody id="userTableBody">
+                                                                                                                                                                                                                                                                                                                                                                                        <!-- User data will be inserted here by JavaScript -->
+                                                                                                                                                                                                                                                                                                                                                                                                        </tbody>
+                                                                                                                                                                                                                                                                                                                                                                                                                    </table>
+                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                    <script src="script.js"></script>
+                                                                                                                                                                                                                                                                                                                                                                                                                                    </body>
+                                                                                                                                                                                                                                                                                                                                                                                                                                    </html>
