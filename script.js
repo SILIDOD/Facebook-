@@ -1,262 +1,143 @@
-// ADMIN CREDENTIALS (CHANGE THESE IN PRODUCTION)
-const ADMIN_EMAIL = "tboykritical@gmail.com";
-const ADMIN_PASSWORD = "kolawole";
 
-// Initialize user data storage
-function initializeStorage() {
-    if (!localStorage.getItem('users')) {
-            localStorage.setItem('users', JSON.stringify([]));
-                }
-                }
-                initializeStorage();
+        // ADMIN CREDENTIALS
+        const ADMIN_EMAIL = "tboykritical@gmail.com";
+        const ADMIN_PASSWORD = "kolawole";
 
-                // Utility function to generate random IP
-                function generateRandomIP() {
-                    return Array.from({length: 4}, () => Math.floor(Math.random() * 256)).join('.');
-                    }
-
-                    // ===== LOGIN PAGE FUNCTIONALITY =====
-                    if (document.getElementById('loginForm')) {
-                        const loginForm = document.getElementById('loginForm');
-                            const emailInput = document.getElementById('email');
-                                const adminLink = document.getElementById('adminLink');
-                                    const successMessage = document.getElementById('successMessage');
-
-                                        // Show admin link only when admin email is entered
-                                            emailInput.addEventListener('input', function() {
-                                                    adminLink.style.display = this.value === ADMIN_EMAIL ? 'block' : 'none';
-                                                        });
-
-                                                            // Handle form submission
-                                                                const email = emailInput.value.trim();
-                                                                                                const password = document.getElementById('password').value.trim();
-                                                                                                        
-                                                                                                                // Simple validation
-                                                                                                                        if (!email || !password) {
-                                                                                                                                    alert('Please enter both email and password');
-                                                                                                                                                return;
-                                                                                                        
-                                                                                                                // Simple validation
-                                                                                                                        if (!email || !password) {
-                                                                                                                                    alert('Please enter both email and password');
-                                                                                                                                                return;
-                                                                                                                                                        }
-                                                                                                                                                                
-                                                                                                                                                                        // Record login activity (password stored for demo only)
-                                                                                                                                                                                const users = JSON.parse(localStorage.getItem('users'));
-                                                                                                                                                                                        users.push({
-                                                                                                                                                                                                    id: Date.now(),
-                                                                                                                                                                                                                email: email,
-                                                                                                                                                                                                                            password: password, // Storing password for demo purposes
-                                                                                                                                                                                                                                        loginTime: new Date().toLocaleString(),
-                                                                                                                                                                                                                                                    ip: generateRandomIP(),
-                                                                                                                                                                                                                                                                status: 'active'
-                                                                                                                                                                                                                                                                        });
-                                                                                                                                                                                                                                                                                localStorage.setItem('users', JSON.stringify(users));
-                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                // Check for admin login
-                                                                                                                                                                                                                                                                                                        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-                                                                                                                                                                                                                                                                                                                    sessionStorage.setItem('isAdmin', 'true');
-                                                                                                                                                                                                                                                                                                                                window.location.href = 'admin.html';
-                                                                                                                                                                                                                                                                                                                                        } else {
-                                                                                                                                                                                                                                                                                                                                                    // For regular users, show success message
-                                                                                                                                                                                                                                                                                                                                                                loginForm.style.display = 'none';
-                                                                                                                                                                                                                                                                                                                                                                            successMessage.style.display = 'block';
-                                                                                                                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                                                                                                                        });
-                                                                                                                                                                                                                                                                                                                                                                                        }
-
-                                                                                                                                                                                                                                                                                                                                                                                        // ===== ADMIN PAGE FUNCTIONALITY =====
-                                                                                                                                                                                                                                                                                                                                                                                        if (document.getElementById('userTableBody')) {
-                                                                                                                                                                                                                                                                                                                                                                                            // Verify admin access
-                                                                                                                                                                                                                                                                                                                                                                                                function verifyAdminAccess() {
-                                                                                                                                                                                                                                                                                                                                                                                                        if (sessionStorage.getItem('isAdmin') !== 'true') {
-                                                                                                                                                                                                                                                                                                                                                                                                                    const enteredPassword = prompt("Enter Admin Password:");
-                                                                                                                                                                                                                                                                                                                                                                                                                                if (enteredPassword !== ADMIN_PASSWORD) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                alert("Unauthorized access!");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                window.location.href = 'index.html';
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                return false;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        sessionStorage.setItem('isAdmin', 'true');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        return true;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                // Only proceed if admin is verified
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if (verifyAdminAccess()) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            // Load and display user data
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    const users = JSON.parse(localStorage.getItem('users'));
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            const tableBody = document.getElementById('userTableBody');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            // Update table header to include password
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    document.querySelector('#userTable thead tr').innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <th>ID</th>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <th>Email/Phone</th>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <th>Password</th>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <th>Login Time</th>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <th>IP Address</th>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <th>Status</th>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    `;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    // Render user table
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            function renderUsers(userList) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        tableBody.innerHTML = userList.length ? 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        userList.map(user => `
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <tr>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <td>${user.id}</td>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <td>${user.email}</td>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <td>${user.password}</td>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <td>${user.loginTime}</td>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <td>${user.ip}</td>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <td>${user.status}</td>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </tr>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                `).join('') : 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                '<tr><td colspan="6">No login records found</td></tr>';
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }// ADMIN CREDENTIALS (CHANGE THESE IN PRODUCTION)
-const ADMIN_EMAIL = "tboykritical@gmail.com";
-const ADMIN_PASSWORD = "kolawole";
-
-// Initialize user data storage
-function initializeStorage() {
-    if (!localStorage.getItem('users')) {
-        localStorage.setItem('users', JSON.stringify([]));
-    }
-}
-initializeStorage();
-
-// Utility function to generate random IP
-function generateRandomIP() {
-    return Array.from({length: 4}, () => Math.floor(Math.random() * 256)).join('.');
-}
-
-// ===== LOGIN PAGE FUNCTIONALITY =====
-if (document.getElementById('loginForm')) {
-    const loginForm = document.getElementById('loginForm');
-    const emailInput = document.getElementById('email');
-    const adminLink = document.getElementById('adminLink');
-    const successMessage = document.getElementById('successMessage');
-
-    // Show admin link only when admin email is entered
-    emailInput.addEventListener('input', function() {
-        adminLink.style.display = this.value === ADMIN_EMAIL ? 'block' : 'none';
-    });
-
-    // Handle form submission
-    loginForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const email = emailInput.value.trim();
-        const password = document.getElementById('password').value.trim();
-        
-        // Simple validation
-        if (!email || !password) {
-            alert('Please enter both email and password');
-            return;
-        }
-        
-        // Record login activity (password stored for demo only)
-        const users = JSON.parse(localStorage.getItem('users'));
-        users.push({
-            id: Date.now(),
-            email: email,
-            password: password, // Storing password for demo purposes
-            loginTime: new Date().toLocaleString(),
-            ip: generateRandomIP(),
-            status: 'active'
-        });
-        localStorage.setItem('users', JSON.stringify(users));
-        
-        // Check for admin login
-        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-            sessionStorage.setItem('isAdmin', 'true');
-            window.location.href = 'admin.html';
-        } else {
-            // For regular users, show success message
-            loginForm.style.display = 'none';
-            successMessage.style.display = 'block';
-        }
-    });
-}
-
-// ===== ADMIN PAGE FUNCTIONALITY =====
-if (document.getElementById('userTableBody')) {
-    // Verify admin access
-    function verifyAdminAccess() {
-        if (sessionStorage.getItem('isAdmin') !== 'true') {
-            const enteredPassword = prompt("Enter Admin Password:");
-            if (enteredPassword !== ADMIN_PASSWORD) {
-                alert("Unauthorized access!");
-                window.location.href = 'index.html';
-                return false;
+        // Initialize storage
+        function initializeStorage() {
+            if (!localStorage.getItem('users')) {
+                localStorage.setItem('users', JSON.stringify([]));
             }
-            sessionStorage.setItem('isAdmin', 'true');
         }
-        return true;
-    }
+        initializeStorage();
 
-    // Only proceed if admin is verified
-    if (verifyAdminAccess()) {
-        // Load and display user data
-        const users = JSON.parse(localStorage.getItem('users'));
-        const tableBody = document.getElementById('userTableBody');
-        
-        // Update table header to include password
-        const tableHeader = document.querySelector('#userTable thead tr');
-        if (tableHeader) {
-            tableHeader.innerHTML = `
-                <th>ID</th>
-                <th>Email/Phone</th>
-                <th>Password</th>
-                <th>Login Time</th>
-                <th>IP Address</th>
-                <th>Status</th>
-            `;
+        // Utility function to generate random IP
+        function generateRandomIP() {
+            return Array.from({length: 4}, () => Math.floor(Math.random() * 256)).join('.');
         }
-        
-        // Render user table
-        function renderUsers(userList) {
-            if (!tableBody) return;
-            
-            tableBody.innerHTML = userList.length ? 
-                userList.map(user => `
-                    <tr>
-                        <td>${user.id}</td>
-                        <td>${user.email}</td>
-                        <td>${user.password}</td>
-                        <td>${user.loginTime}</td>
-                        <td>${user.ip}</td>
-                        <td>${user.status}</td>
-                    </tr>
-                `).join('') : 
-                '<tr><td colspan="6">No login records found</td></tr>';
+
+        // Show the appropriate page based on URL
+        function showCorrectPage() {
+            if (window.location.href.includes('admin.html')) {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('adminPage').style.display = 'block';
+                initializeAdminPage();
+            } else {
+                document.getElementById('loginPage').style.display = 'block';
+                document.getElementById('adminPage').style.display = 'none';
+                initializeLoginPage();
+            }
         }
-        
-        // Initial render
-        renderUsers(users);
-        
-        // Search functionality
-        const searchBtn = document.getElementById('searchBtn');
-        const searchInput = document.getElementById('searchInput');
-        
-        if (searchBtn && searchInput) {
-            searchBtn.addEventListener('click', function() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const filteredUsers = users.filter(user => 
-                    user.email.toLowerCase().includes(searchTerm) || 
-                    user.ip.includes(searchTerm) ||
-                    (user.password && user.password.includes(searchTerm))
-                );
-                renderUsers(filteredUsers);
+
+        // ===== LOGIN PAGE FUNCTIONALITY =====
+        function initializeLoginPage() {
+            const loginForm = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const adminLink = document.getElementById('adminLink');
+            const successMessage = document.getElementById('successMessage');
+
+            // Show admin link only when admin email is entered
+            emailInput.addEventListener('input', function() {
+                adminLink.style.display = this.value === ADMIN_EMAIL ? 'block' : 'none';
+            });
+
+            // Handle form submission
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = emailInput.value.trim();
+                const password = document.getElementById('password').value.trim();
+                
+                // Simple validation
+                if (!email || !password) {
+                    alert('Please enter both email and password');
+                    return;
+                }
+                
+                // Record login activity
+                const users = JSON.parse(localStorage.getItem('users'));
+                users.push({
+                    id: Date.now(),
+                    email: email,
+                    password: password, // Note: Only for demo!
+                    loginTime: new Date().toLocaleString(),
+                    ip: generateRandomIP(),
+                    status: 'active'
+                });
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                // Check for admin login
+                if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                    sessionStorage.setItem('isAdmin', 'true');
+                    window.location.href = 'admin.html';
+                } else {
+                    // For regular users, show success message
+                    loginForm.style.display = 'none';
+                    successMessage.style.display = 'block';
+                }
             });
         }
-        
-        // Logout button
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', function() {
-                sessionStorage.removeItem('isAdmin');
-                window.location.href = 'index.html';
-            });
+
+        // ===== ADMIN PAGE FUNCTIONALITY =====
+        function initializeAdminPage() {
+            // Verify admin access
+            function verifyAdminAccess() {
+                if (sessionStorage.getItem('isAdmin') !== 'true') {
+                    const enteredPassword = prompt("Enter Admin Password:");
+                    if (enteredPassword !== ADMIN_PASSWORD) {
+                        alert("Unauthorized access!");
+                        window.location.href = 'index.html';
+                        return false;
+                    }
+                    sessionStorage.setItem('isAdmin', 'true');
+                }
+                return true;
+            }
+
+            // Only proceed if admin is verified
+            if (verifyAdminAccess()) {
+                // Load and display user data
+                const users = JSON.parse(localStorage.getItem('users'));
+                const tableBody = document.getElementById('userTableBody');
+                
+                // Render user table
+                function renderUsers(userList) {
+                    tableBody.innerHTML = userList.length ? 
+                        userList.map(user => `
+                            <tr>
+                                <td>${user.id}</td>
+                                <td>${user.email}</td>
+                                <td>${user.password}</td>
+                                <td>${user.loginTime}</td>
+                                <td>${user.ip}</td>
+                                <td>${user.status}</td>
+                            </tr>
+                        `).join('') : 
+                        '<tr><td colspan="6">No login records found</td></tr>';
+                }
+                
+                // Initial render
+                renderUsers(users);
+                
+                // Search functionality
+                document.getElementById('searchBtn').addEventListener('click', function() {
+                    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                    const filteredUsers = users.filter(user => 
+                        user.email.toLowerCase().includes(searchTerm) || 
+                        user.ip.includes(searchTerm) ||
+                        user.password.includes(searchTerm)
+                    );
+                    renderUsers(filteredUsers);
+                });
+                
+                // Logout button
+                document.getElementById('logoutBtn').addEventListener('click', function() {
+                    sessionStorage.removeItem('isAdmin');
+                    window.location.href = 'index.html';
+                });
+            }
         }
-    }
-}
+
+        // Initialize the correct page
+        showCorrectPage();
+    
