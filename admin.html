@@ -6,7 +6,27 @@
             <title>Admin Dashboard</title>
                 <link rel="stylesheet" href="style.css">
                 </head>
+    
                 <body>
+<script>
+// Add this to your admin page code:
+document.getElementById('exportData').addEventListener('click', function() {
+    const data = localStorage.getItem('users');
+    prompt("Copy this data to share:", data);
+});
+
+document.getElementById('importBtn').addEventListener('click', function() {
+    const data = document.getElementById('importData').value;
+    try {
+        JSON.parse(data); // Validate it's JSON
+        localStorage.setItem('users', data);
+        alert('Data imported! Refresh to see changes.');
+    } catch {
+        alert('Invalid data format!');
+    }
+});
+</script>
+                    
                     <div class="admin-container">
                             <header class="admin-header">
                                         <h1>Admin Dashboard</h1>
