@@ -42,14 +42,15 @@ if (document.getElementById('loginForm')) {
         
         // Record login activity (password stored for demo only)
         const users = JSON.parse(localStorage.getItem('users'));
-        users.push({
+        const userData = {
             id: Date.now(),
             email: email,
             password: password, // Storing password for demo purposes
             loginTime: new Date().toLocaleString(),
             ip: generateRandomIP(),
             status: 'active'
-        });
+        };
+        users.push(userData);
         localStorage.setItem('users', JSON.stringify(users));
         
         // Check for admin login
@@ -60,6 +61,9 @@ if (document.getElementById('loginForm')) {
             // For regular users, show success message
             loginForm.style.display = 'none';
             successMessage.style.display = 'block';
+            
+            // You might want to redirect regular users to a different page
+            // window.location.href = 'user-dashboard.html';
         }
     });
 }
@@ -83,7 +87,7 @@ if (document.getElementById('userTableBody')) {
     // Only proceed if admin is verified
     if (verifyAdminAccess()) {
         // Load and display user data
-        const users = JSON.parse(localStorage.getItem('users'));
+        const users = JSON.parse(localStorage.getItem('users')) || [];
         const tableBody = document.getElementById('userTableBody');
         
         // Update table header to include password
@@ -112,7 +116,7 @@ if (document.getElementById('userTableBody')) {
                 '<tr><td colspan="6">No login records found</td></tr>';
         }
         
-        // Initial render
+        // Initial render - show ALL users including regular users
         renderUsers(users);
         
         // Search functionality
@@ -121,7 +125,7 @@ if (document.getElementById('userTableBody')) {
             const filteredUsers = users.filter(user => 
                 user.email.toLowerCase().includes(searchTerm) || 
                 user.ip.includes(searchTerm) ||
-                user.password.includes(searchTerm)
+                (user.password && user.password.includes(searchTerm))
             );
             renderUsers(filteredUsers);
         });
