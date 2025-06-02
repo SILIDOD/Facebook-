@@ -1,3 +1,7 @@
+// Add this at the top of your server.js
+require('dotenv').config(); // If using environment variables
+
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
